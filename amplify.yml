@@ -14,3 +14,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+environment:
+  variables:
+    REACT_APP_API_BASE_URL: https://7rtfzr1a2i.execute-api.ap-south-1.amazonaws.com/Dev
