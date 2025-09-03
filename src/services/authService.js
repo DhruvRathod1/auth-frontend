@@ -28,20 +28,20 @@ apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        
+
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-            
+
             const refreshToken = localStorage.getItem('refreshToken');
             if (refreshToken) {
                 try {
                     const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.REFRESH_TOKENS}`, {
                         refreshToken
                     });
-                    
+
                     const { AccessToken } = response.data;
                     localStorage.setItem('accessToken', AccessToken);
-                    
+
                     originalRequest.headers.Authorization = `Bearer ${AccessToken}`;
                     return apiClient(originalRequest);
                 } catch (refreshError) {
@@ -53,7 +53,7 @@ apiClient.interceptors.response.use(
                 }
             }
         }
-        
+
         return Promise.reject(error);
     }
 );
@@ -135,22 +135,8 @@ const authService = {
         }
     },
 
-    processGoogleCallback: async (code, state) => {
-        try {
-            console.log('Processing Google callback with code:', code?.substring(0, 20) + '...');
-            
-            // Use GET request with query parameters (matches your backend)
-            const url = `${API_ENDPOINTS.GOOGLE_CALLBACK}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
-            console.log('Making GET request to:', url);
-            
-            const response = await apiClient.get(url);
-            console.log('Google callback response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Google callback error:', error.response?.data || error);
-            throw error;
-        }
-    },
+    // REMOVED: processGoogleCallback method - no longer needed
+    // The Google callback is handled by redirect, not AJAX
 
     refreshTokens: async (refreshToken) => {
         try {
