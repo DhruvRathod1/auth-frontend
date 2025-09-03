@@ -9,22 +9,28 @@ const ForgotPassword = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setSuccess('');
 
-        try {
-            await authService.forgotPassword(email);
-            setSuccess('Password reset code sent to your email!');
-            setTimeout(() => navigate('/reset-password', { state: { email } }), 2000);
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to send reset code');
-        } finally {
-            setLoading(false);
-        }
-    };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+        const response = await authService.forgotPassword(email);
+        console.log('Forgot password successful:', response);
+    
+        navigate('/reset-password', { 
+            state: { email: email } 
+        });
+        
+    } catch (err) {
+        console.error('Forgot password error:', err);
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Failed to send reset code';
+        setError(errorMessage);
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="container">

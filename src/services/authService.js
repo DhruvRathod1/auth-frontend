@@ -113,21 +113,28 @@ const authService = {
         }
     },
 
-    resetPassword: async (email, code, newPassword) => {
-        try {
-            console.log('Resetting password for:', email);
-            const response = await apiClient.post(API_ENDPOINTS.RESET_PASSWORD, {
-                email,
-                code,
-                newPassword
-            });
-            console.log('Reset password response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Reset password error:', error.response?.data || error);
-            throw error;
-        }
-    },
+resetPassword: async (data) => {
+    try {
+        const payload = {
+            email: data.email.trim(),
+            code: data.code.trim(),
+            newPassword: data.newPassword
+        };
+        
+        console.log('Resetting password with payload:', {
+            email: payload.email,
+            code: payload.code,
+            newPassword: '***hidden***'
+        });
+        
+        const response = await apiClient.post(API_ENDPOINTS.RESET_PASSWORD, payload);
+        console.log('Reset password response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Reset password error:', error.response?.data || error);
+        throw error;
+    }
+},
 
     getGoogleAuthUrl: async () => {
         try {
