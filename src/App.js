@@ -7,6 +7,7 @@ import SignUp from './components/auth/SignUp';
 import VerifyEmail from './components/auth/VerifyEmail';
 import ForgotPassword from './components/auth/Forgotpassword';
 import ResetPassword from './components/auth/ResetPassword';
+import GoogleCallback from './components/auth/GoogleCallback';
 import Dashboard from './components/Dashboard';
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>

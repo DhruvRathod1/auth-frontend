@@ -13,3 +13,13 @@ export const API_ENDPOINTS = {
     GOOGLE_AUTH: '/auth/google/auth',
     GOOGLE_CALLBACK: '/auth/google/callback'
 };
+
+// Debug logging
+console.log('Environment:', process.env.NODE_ENV);
+console.log('API Base URL:', API_BASE_URL);
+console.log('Full API URLs:', {
+    signup: `${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`,
+    signin: `${API_BASE_URL}${API_ENDPOINTS.SIGNIN}`,
+    googleAuth: `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_AUTH}`,
+    googleCallback: `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_CALLBACK}`
+});

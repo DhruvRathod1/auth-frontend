@@ -1,4 +1,3 @@
-// filepath: c:\Users\dharuv rathod\Desktop\projects\auth-frontend\src\components\auth\SignIn.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
@@ -11,6 +10,7 @@ const SignIn = () => {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useUser();
 
@@ -21,13 +21,12 @@ const SignIn = () => {
         });
     };
 
-    // Simple welcome toast function
     const showWelcomeToast = (userName) => {
         const toast = document.createElement('div');
         toast.className = 'welcome-toast';
         toast.textContent = `Welcome back, ${userName}! 👋`;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 3000);
@@ -40,18 +39,14 @@ const SignIn = () => {
 
         try {
             const response = await authService.signin(formData);
-            const { user } = response; // Removed unused 'tokens'
-            
-            // Login user
+            const { user } = response;
+
             login(user);
-            
-            // Show simple welcome toast
             const userName = user.name || user.email?.split('@')[0] || 'User';
             showWelcomeToast(userName);
-            
-            // Navigate to dashboard after a short delay
+
             setTimeout(() => navigate('/dashboard'), 1500);
-            
+
         } catch (err) {
             setError(err.response?.data?.message || 'Sign in failed');
         } finally {
@@ -60,13 +55,25 @@ const SignIn = () => {
     };
 
     const handleGoogleAuth = async () => {
+        setGoogleLoading(true);
+        setError('');
+
         try {
             const response = await authService.getGoogleAuthUrl();
             if (response.authUrl) {
-                window.location.href = response.authUrl;
+                const loadingToast = document.createElement('div');
+                loadingToast.className = 'welcome-toast';
+                loadingToast.style.background = '#007bff';
+                loadingToast.textContent = 'Redirecting to Google... 🔄';
+                document.body.appendChild(loadingToast);
+
+                setTimeout(() => {
+                    window.location.href = response.authUrl;
+                }, 500);
             }
         } catch (err) {
             setError('Google authentication failed');
+            setGoogleLoading(false);
         }
     };
 
@@ -77,10 +84,18 @@ const SignIn = () => {
 
                 <button
                     type="button"
-                    className="btn btn-google"
+                    className={`btn btn-google ${googleLoading ? 'loading' : ''}`}
                     onClick={handleGoogleAuth}
+                    disabled={googleLoading || loading}
                 >
-                    Continue with Google
+                    {googleLoading ? (
+                        <>
+                            <span className="spinner"></span>
+                            Connecting to Google...
+                        </>
+                    ) : (
+                        'Continue with Google'
+                    )}
                 </button>
 
                 <div style={{ textAlign: 'center', margin: '1rem 0', color: '#6c757d' }}>
@@ -96,6 +111,7 @@ const SignIn = () => {
                             value={formData.email}
                             onChange={handleChange}
                             required
+                            disabled={loading || googleLoading}
                         />
                     </div>
 
@@ -107,12 +123,17 @@ const SignIn = () => {
                             value={formData.password}
                             onChange={handleChange}
                             required
+                            disabled={loading || googleLoading}
                         />
                     </div>
 
                     {error && <div className="error">{error}</div>}
 
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                    <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={loading || googleLoading}
+                    >
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
