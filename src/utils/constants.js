@@ -1,6 +1,6 @@
 export const API_BASE_URL = process.env.NODE_ENV === 'development'
     ? '/api'
-    : process.env.REACT_APP_API_BASE_URL;
+    : 'https://7rtfzr1a2i.execute-api.ap-south-1.amazonaws.com/Dev';
 
 export const API_ENDPOINTS = {
     HEALTH: '/auth/health',
