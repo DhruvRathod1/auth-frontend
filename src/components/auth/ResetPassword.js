@@ -22,7 +22,7 @@ const ResetPassword = () => {
         const emailFromState = location.state?.email;
         const emailFromParams = searchParams.get('email');
         const emailFromStorage = localStorage.getItem('resetPasswordEmail');
-        
+
         if (emailFromState) {
             setFormData(prev => ({ ...prev, email: emailFromState }));
             localStorage.setItem('resetPasswordEmail', emailFromState);
@@ -50,7 +50,7 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validation
         if (!formData.email || !formData.code || !formData.newPassword || !formData.confirmPassword) {
             setError('All fields are required');
@@ -95,7 +95,7 @@ const ResetPassword = () => {
 
             // Show success message
             showSuccessToast('Password reset successfully! Please sign in with your new password.');
-            
+
             // Redirect to sign in
             setTimeout(() => navigate('/'), 2000);
 
@@ -114,7 +114,7 @@ const ResetPassword = () => {
         toast.style.background = '#28a745';
         toast.textContent = message;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 3000);
@@ -244,9 +244,9 @@ const ResetPassword = () => {
                             </div>
                         )}
 
-                        <button 
-                            type="submit" 
-                            className="btn btn-primary" 
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
                             disabled={loading || !formData.email || !formData.code || !formData.newPassword || !formData.confirmPassword}
                         >
                             {loading ? (
@@ -266,37 +266,15 @@ const ResetPassword = () => {
                             type="button"
                             onClick={() => navigate('/forgot-password')}
                             className="link-primary"
-                            style={{ 
-                                background: 'none', 
-                                border: 'none', 
+                            style={{
+                                background: 'none',
+                                border: 'none',
                                 textDecoration: 'underline',
                                 cursor: 'pointer'
                             }}
                         >
                             ← Back to Forgot Password
                         </button>
-                    </div>
-                </div>
-
-                {/* Side Panel */}
-                <div className="auth-side-panel">
-                    <div className="side-content">
-                        <h2>🔄 Reset Password</h2>
-                        <p>Create a new secure password for your account</p>
-                        <div className="features-list">
-                            <div className="feature-item">
-                                <span className="feature-icon">🔒</span>
-                                <span>Secure Process</span>
-                            </div>
-                            <div className="feature-item">
-                                <span className="feature-icon">✅</span>
-                                <span>Email Verified</span>
-                            </div>
-                            <div className="feature-item">
-                                <span className="feature-icon">🛡️</span>
-                                <span>Password Protected</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
