@@ -125,7 +125,6 @@ const VerifyEmail = () => {
                                     disabled={loading}
                                     className="form-input"
                                 />
-                                <span className="input-icon">📧</span>
                             </div>
                         </div>
 
@@ -143,7 +142,7 @@ const VerifyEmail = () => {
                                     maxLength="6"
                                     className="form-input code-input"
                                 />
-                                <span className="input-icon">🔢</span>
+
                             </div>
                             <p className="input-hint">
                                 Enter the 6-digit code from your email
