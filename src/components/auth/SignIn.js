@@ -1,5 +1,7 @@
+// filepath: c:\Users\dharuv rathod\Desktop\projects\auth-frontend\src\components\auth\SignIn.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext';
 import authService from '../../services/authService';
 
 const SignIn = () => {
@@ -10,6 +12,7 @@ const SignIn = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useUser();
 
     const handleChange = (e) => {
         setFormData({
@@ -18,14 +21,37 @@ const SignIn = () => {
         });
     };
 
+    // Simple welcome toast function
+    const showWelcomeToast = (userName) => {
+        const toast = document.createElement('div');
+        toast.className = 'welcome-toast';
+        toast.textContent = `Welcome back, ${userName}! 👋`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
-            await authService.signin(formData);
-            navigate('/dashboard');
+            const response = await authService.signin(formData);
+            const { user } = response; // Removed unused 'tokens'
+            
+            // Login user
+            login(user);
+            
+            // Show simple welcome toast
+            const userName = user.name || user.email?.split('@')[0] || 'User';
+            showWelcomeToast(userName);
+            
+            // Navigate to dashboard after a short delay
+            setTimeout(() => navigate('/dashboard'), 1500);
+            
         } catch (err) {
             setError(err.response?.data?.message || 'Sign in failed');
         } finally {
