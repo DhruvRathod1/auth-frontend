@@ -21,17 +21,6 @@ const SignUp = () => {
         });
     };
 
-    const showWelcomeToast = (userName) => {
-        const toast = document.createElement('div');
-        toast.className = 'welcome-toast';
-        toast.textContent = `Welcome, ${userName}! Please verify your email 📧`;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    };
-
     // In your SignUp component's handleSubmit:
     const handleSubmit = async (e) => {
         e.preventDefault();

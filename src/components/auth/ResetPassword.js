@@ -134,7 +134,6 @@ const ResetPassword = () => {
                 <div className="auth-card" style={{ maxWidth: '500px', margin: '0 auto' }}>
                     {/* Header */}
                     <div className="auth-header">
-                        <div className="auth-logo">🔐</div>
                         <h1 className="auth-title">Reset Password</h1>
                         <p className="auth-subtitle">Enter the code sent to your email and create a new password</p>
                     </div>
@@ -154,7 +153,6 @@ const ResetPassword = () => {
                                     required
                                     disabled={loading}
                                 />
-                                <span className="input-icon">📧</span>
                             </div>
                         </div>
 
@@ -177,7 +175,6 @@ const ResetPassword = () => {
                                         textAlign: 'center'
                                     }}
                                 />
-                                <span className="input-icon">🔢</span>
                             </div>
                             <p style={{ fontSize: '0.8rem', color: '#718096', marginTop: '0.5rem' }}>
                                 Check your email for the verification code
