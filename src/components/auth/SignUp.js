@@ -32,32 +32,25 @@ const SignUp = () => {
         }, 3000);
     };
 
+    // In your SignUp component's handleSubmit:
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
-            setLoading(false);
-            return;
-        }
-
         try {
-            await authService.signup({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password
+            const response = await authService.signup(formData);
+            console.log('Signup successful:', response);
+
+            // Navigate to verify email with email in state
+            navigate('/verify-email', {
+                state: { email: formData.email }
             });
 
-            showWelcomeToast(formData.name || formData.email.split('@')[0]);
-
-            setTimeout(() => {
-                navigate('/verify-email', { state: { email: formData.email } });
-            }, 1500);
-
         } catch (err) {
-            setError(err.response?.data?.message || 'Sign up failed');
+            console.error('Signup error:', err);
+            const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Signup failed';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

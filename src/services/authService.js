@@ -85,8 +85,13 @@ const authService = {
 
     verifyEmail: async (email, code) => {
         try {
-            console.log('Verifying email:', email);
-            const response = await apiClient.post(API_ENDPOINTS.VERIFY, { email, code });
+            const payload = {
+                email: email.trim(),
+                code: code.trim()
+            };
+            console.log('Verifying email with payload:', payload);
+
+            const response = await apiClient.post(API_ENDPOINTS.VERIFY, payload);
             console.log('Verify response:', response.data);
             return response.data;
         } catch (error) {
@@ -94,6 +99,7 @@ const authService = {
             throw error;
         }
     },
+
 
     forgotPassword: async (email) => {
         try {
