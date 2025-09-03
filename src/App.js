@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './contexts/UserContext';
-import UserDisplay from './components/UserDisplay';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import VerifyEmail from './components/auth/VerifyEmail';
@@ -16,7 +15,6 @@ function App() {
     <UserProvider>
       <Router>
         <div className="App">
-          <UserDisplay />
           <Routes>
             <Route path="/" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />

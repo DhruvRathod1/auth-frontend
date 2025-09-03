@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
+import { useUser } from '../../contexts/UserContext';
 import authService from '../../services/authService';
 
 const SignIn = () => {
@@ -8,20 +8,28 @@ const SignIn = () => {
         email: '',
         password: ''
     });
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
-    const [error, setError] = useState('');
-    
-    const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
+    const { login } = useUser();
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
-        // Clear error when user starts typing
-        if (error) setError('');
+    };
+
+    const showWelcomeToast = (userName) => {
+        const toast = document.createElement('div');
+        toast.className = 'welcome-toast';
+        toast.textContent = `Welcome back, ${userName}! 👋`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
     };
 
     const handleSubmit = async (e) => {
@@ -30,121 +38,113 @@ const SignIn = () => {
         setError('');
 
         try {
-            const result = await authService.signin(formData);
-            
-            if (result.success) {
-                // Store tokens and user data
-                localStorage.setItem('accessToken', result.tokens.AccessToken);
-                localStorage.setItem('refreshToken', result.tokens.RefreshToken);
-                localStorage.setItem('idToken', result.tokens.IdToken);
-                localStorage.setItem('user', JSON.stringify(result.user));
-                
-                setUser(result.user);
-                navigate('/dashboard');
-            } else {
-                setError(result.message || 'Sign in failed');
-            }
-        } catch (error) {
-            console.error('Sign in error:', error);
-            
-            if (error.response?.data?.error) {
-                setError(error.response.data.error);
-            } else if (error.message) {
-                setError(error.message);
-            } else {
-                setError('An error occurred during sign in');
-            }
+            const response = await authService.signin(formData);
+            const { user } = response;
+
+            login(user);
+            const userName = user.name || user.email?.split('@')[0] || 'User';
+            showWelcomeToast(userName);
+
+            setTimeout(() => navigate('/dashboard'), 1500);
+
+        } catch (err) {
+            setError(err.response?.data?.message || 'Sign in failed');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleGoogleSignIn = async () => {
+    const handleGoogleAuth = async () => {
         setGoogleLoading(true);
         setError('');
-        
+
         try {
-            console.log('Starting Google OAuth flow...');
-            const result = await authService.getGoogleAuthUrl();
-            
-            if (result.authUrl) {
-                console.log('Redirecting to Google OAuth...');
-                // Redirect to Google OAuth - this is a full page redirect, not an AJAX call
-                window.location.href = result.authUrl;
-            } else {
-                setError('Failed to get Google authentication URL');
-                setGoogleLoading(false);
+            const response = await authService.getGoogleAuthUrl();
+            if (response.authUrl) {
+                const loadingToast = document.createElement('div');
+                loadingToast.className = 'welcome-toast';
+                loadingToast.style.background = '#007bff';
+                loadingToast.textContent = 'Redirecting to Google... 🔄';
+                document.body.appendChild(loadingToast);
+
+                setTimeout(() => {
+                    window.location.href = response.authUrl;
+                }, 500);
             }
-        } catch (error) {
-            console.error('Google OAuth error:', error);
-            setError('Failed to initiate Google sign-in');
+        } catch (err) {
+            setError('Google authentication failed');
             setGoogleLoading(false);
         }
     };
 
     return (
-        <div className="auth-container">
+        <div className="container">
             <div className="auth-card">
-                <h2>Sign In</h2>
-                
-                {error && (
-                    <div className="error-message">
-                        {error}
-                    </div>
-                )}
-                
+                <h1>Sign In</h1>
+
+                <button
+                    type="button"
+                    className={`btn btn-google ${googleLoading ? 'loading' : ''}`}
+                    onClick={handleGoogleAuth}
+                    disabled={googleLoading || loading}
+                >
+                    {googleLoading ? (
+                        <>
+                            <span className="spinner"></span>
+                            Connecting to Google...
+                        </>
+                    ) : (
+                        'Continue with Google'
+                    )}
+                </button>
+
+                <div style={{ textAlign: 'center', margin: '1rem 0', color: '#6c757d' }}>
+                    or
+                </div>
+
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label>Email</label>
                         <input
                             type="email"
-                            id="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            placeholder="Enter your email"
+                            disabled={loading || googleLoading}
                         />
                     </div>
-                    
+
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label>Password</label>
                         <input
                             type="password"
-                            id="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            placeholder="Enter your password"
+                            disabled={loading || googleLoading}
                         />
                     </div>
-                    
-                    <button 
-                        type="submit" 
-                        className="auth-button"
-                        disabled={loading}
+
+                    {error && <div className="error">{error}</div>}
+
+                    <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={loading || googleLoading}
                     >
-                        {loading ? 'Signing In...' : 'Sign In'}
+                        {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
-                
-                <div className="divider">
-                    <span>OR</span>
+
+                <div className="text-center mt-1">
+                    <Link to="/forgot-password" className="link">Forgot Password?</Link>
                 </div>
-                
-                <button
-                    type="button"
-                    className="google-button"
-                    onClick={handleGoogleSignIn}
-                    disabled={googleLoading}
-                >
-                    {googleLoading ? 'Redirecting...' : 'Continue with Google'}
-                </button>
-                
-                <div className="auth-links">
-                    <Link to="/forgot-password">Forgot your password?</Link>
-                    <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
+
+                <div className="text-center mt-1">
+                    <span>Don't have an account? </span>
+                    <Link to="/signup" className="link">Sign Up</Link>
                 </div>
             </div>
         </div>
