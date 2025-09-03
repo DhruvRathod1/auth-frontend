@@ -33,3 +33,6 @@ export const UserProvider = ({ children }) => {
         </UserContext.Provider>
     );
 };
+
+// Export UserContext for direct use
+export { UserContext };
