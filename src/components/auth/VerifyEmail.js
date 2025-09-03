@@ -94,20 +94,27 @@ const VerifyEmail = () => {
 
     return (
         <div className="auth-container">
-            <div className="auth-wrapper">
-                <div className="auth-card" style={{ maxWidth: '450px', margin: '0 auto' }}>
-                    <div className="auth-header">
-                        <div className="auth-logo">📧</div>
-                        <h1 className="auth-title">Verify Your Email</h1>
-                        <p className="auth-subtitle">
-                            Enter the 6-digit code sent to {email}
+            <div className="verify-email-wrapper">
+                <div className="verify-email-card">
+                    {/* Header Section */}
+                    <div className="verify-header">
+                        <div className="verify-icon-container">
+                            <div className="verify-icon">📧</div>
+                        </div>
+                        <h1 className="verify-title">Verify Your Email</h1>
+                        <p className="verify-subtitle">
+                            We've sent a 6-digit verification code to
                         </p>
+                        <div className="email-display">
+                            {email}
+                        </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="auth-form">
+                    {/* Form Section */}
+                    <form onSubmit={handleSubmit} className="verify-form">
                         <div className="form-group">
-                            <label htmlFor="email">Email Address</label>
-                            <div className="input-wrapper">
+                            <label htmlFor="email" className="form-label">Email Address</label>
+                            <div className="input-container">
                                 <input
                                     type="email"
                                     id="email"
@@ -116,48 +123,48 @@ const VerifyEmail = () => {
                                     placeholder="Enter your email"
                                     required
                                     disabled={loading}
+                                    className="form-input"
                                 />
                                 <span className="input-icon">📧</span>
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="code">Verification Code</label>
-                            <div className="input-wrapper">
+                            <label htmlFor="code" className="form-label">Verification Code</label>
+                            <div className="input-container">
                                 <input
                                     type="text"
                                     id="code"
                                     value={code}
                                     onChange={handleCodeChange}
-                                    placeholder="Enter 6-digit code"
+                                    placeholder="000000"
                                     required
                                     disabled={loading}
                                     maxLength="6"
-                                    style={{
-                                        fontSize: '1.2rem',
-                                        letterSpacing: '0.2em',
-                                        textAlign: 'center'
-                                    }}
+                                    className="form-input code-input"
                                 />
                                 <span className="input-icon">🔢</span>
                             </div>
+                            <p className="input-hint">
+                                Enter the 6-digit code from your email
+                            </p>
                         </div>
 
                         {error && (
-                            <div className="error-message">
+                            <div className="error-container">
                                 <span className="error-icon">⚠️</span>
-                                {error}
+                                <span className="error-text">{error}</span>
                             </div>
                         )}
 
                         <button
                             type="submit"
-                            className="btn btn-primary"
+                            className="verify-button"
                             disabled={loading || !email || !code}
                         >
                             {loading ? (
                                 <>
-                                    <span className="spinner"></span>
+                                    <span className="button-spinner"></span>
                                     Verifying...
                                 </>
                             ) : (
@@ -165,26 +172,20 @@ const VerifyEmail = () => {
                             )}
                         </button>
                     </form>
-                </div>
 
-                <div className="auth-side-panel">
-                    <div className="side-content">
-                        <h2>📬 Check Your Email</h2>
-                        <p>We've sent you a secure verification code</p>
-                        <div className="features-list">
-                            <div className="feature-item">
-                                <span className="feature-icon">🔒</span>
-                                <span>Secure Verification</span>
-                            </div>
-                            <div className="feature-item">
-                                <span className="feature-icon">⏱️</span>
-                                <span>Quick Process</span>
-                            </div>
-                            <div className="feature-item">
-                                <span className="feature-icon">✉️</span>
-                                <span>Email Protection</span>
-                            </div>
-                        </div>
+                    {/* Footer Section */}
+                    <div className="verify-footer">
+                        <p className="footer-text">
+                            Didn't receive the code? Check your spam folder
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/signup')}
+                            className="back-button"
+                            disabled={loading}
+                        >
+                            ← Back to Sign Up
+                        </button>
                     </div>
                 </div>
             </div>
