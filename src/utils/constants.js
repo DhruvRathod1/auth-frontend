@@ -11,7 +11,9 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: '/auth/reset-password',
     REFRESH_TOKENS: '/auth/refresh-tokens',
     GOOGLE_AUTH: '/auth/google/auth',
-    GOOGLE_CALLBACK: '/auth/google/callback'
+    GOOGLE_CALLBACK: '/auth/google/callback',
+    SIGNOUT_GLOBAL: '/auth/signout-global',
+    SIGNOUT_LOCAL: '/auth/signout-local'
 };
 
 // Debug logging

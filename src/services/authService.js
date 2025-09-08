@@ -159,6 +159,76 @@ resetPassword: async (data) => {
             console.error('Refresh tokens error:', error.response?.data || error);
             throw error;
         }
+    },
+
+    /**
+     * Sign out user globally (invalidates all sessions)
+     */
+    signOutGlobal: async () => {
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                throw new Error('No access token found');
+            }
+
+            console.log('Signing out user globally');
+            const response = await apiClient.post(API_ENDPOINTS.SIGNOUT_GLOBAL, {
+                accessToken
+            });
+            
+            console.log('Global sign out successful:', response.data);
+            
+            // Clear all local storage
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('user');
+            
+            return response.data;
+        } catch (error) {
+            console.error('Global sign out error:', error.response?.data || error);
+            // Still clear local storage even if API call fails
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('user');
+            throw error;
+        }
+    },
+
+    /**
+     * Sign out user from current session only
+     */
+    signOutLocal: async () => {
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                throw new Error('No access token found');
+            }
+
+            console.log('Signing out user from current session');
+            const response = await apiClient.post(API_ENDPOINTS.SIGNOUT_LOCAL, {
+                accessToken
+            });
+            
+            console.log('Local sign out successful:', response.data);
+            
+            // Clear all local storage
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('user');
+            
+            return response.data;
+        } catch (error) {
+            console.error('Local sign out error:', error.response?.data || error);
+            // Still clear local storage even if API call fails
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('user');
+            throw error;
+        }
     }
 };
 

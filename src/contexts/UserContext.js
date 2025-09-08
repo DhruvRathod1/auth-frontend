@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import authService from '../services/authService';
 
 const UserContext = createContext();
 
@@ -27,8 +28,36 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem('idToken');
     };
 
+    const logoutGlobal = async () => {
+        try {
+            await authService.signOutGlobal();
+            setUser(null);
+        } catch (error) {
+            console.error('Error during global logout:', error);
+            // Still clear local state even if API call fails
+            setUser(null);
+        }
+    };
+
+    const logoutLocal = async () => {
+        try {
+            await authService.signOutLocal();
+            setUser(null);
+        } catch (error) {
+            console.error('Error during local logout:', error);
+            // Still clear local state even if API call fails
+            setUser(null);
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ 
+            user, 
+            login, 
+            logout, 
+            logoutGlobal, 
+            logoutLocal 
+        }}>
             {children}
         </UserContext.Provider>
     );
